@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
-import bcrypt from 'bcrypt';
-import { authValidation } from '../validations/auth.validation';
-import { authUser } from '../repositories/auth.repository';
+import bcrypt, { hash } from 'bcrypt';
+import { authValidation, registerUserValidation } from '../validations/auth.validation';
+import { authUser, registerUser} from '../repositories/auth.repository';
 import { sign } from "jsonwebtoken";
 
 const secretToken = process.env.SECRET_TOKEN
@@ -30,3 +30,17 @@ export const authenticate = async (req: Request, res: Response) => {
     res.status(400).send(e);
   }
 };
+export const register = async (req: Request, res: Response) => {
+  try {
+    await registerUserValidation.validate(req.body);
+    const hashPassword = await hash(req.body.password, 10);
+    req.body.password = hashPassword;
+    const user = await registerUser(req.body);
+    const token = sign({id: user.id}, `${secretToken}`, {expiresIn: "365d"});
+    const { password, ...userWithoutPassword } = user;
+    res.status(200).send({user: userWithoutPassword, token});
+  } catch (e: any) {
+    res.status(400).send(e);
+  }
+};
+

@@ -30,3 +30,29 @@ export const authUser = async (data: User): Promise<User | null> => {
   });
   return user;
 };
+
+export const registerUser = async (data: User): Promise<User> => {
+  try {
+    const user = await prisma.user.create({
+      data: {
+        name: data.name,
+        nick: data.nick,
+        email: data.email,
+        password: data.password ? data.password : '',
+      },
+      select: {
+        id: true,
+        nick: true,
+        name: true,
+        email: true,
+        password: true,
+        admin: true,
+        createdAt: true,
+        updatedAt: true,
+      }
+    });
+    return user;
+  } catch (error) {
+    throw error;
+  }
+};

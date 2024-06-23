@@ -1,6 +1,5 @@
 import { Prisma } from '@prisma/client';
 import { prisma } from '../services/prisma';
-import { verify } from 'jsonwebtoken';
 
 type User = {
   id: number;
@@ -11,32 +10,6 @@ type User = {
   admin: boolean;
   createdAt: Date;
   updatedAt: Date;
-};
-
-export const createUser = async (data: User): Promise<User> => {
-  try {
-    const user = await prisma.user.create({
-      data: {
-        name: data.name,
-        nick: data.nick,
-        email: data.email,
-        password: data.password ? data.password : '',
-      },
-      select: {
-        id: true,
-        nick: true,
-        name: true,
-        email: true,
-        password: false,
-        admin: true,
-        createdAt: true,
-        updatedAt: true,
-      }
-    });
-    return user;
-  } catch (error) {
-    throw error;
-  }
 };
 
 export const getAll = async (): Promise<User[]> => {
