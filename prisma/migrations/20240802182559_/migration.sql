@@ -1,0 +1,8 @@
+-- AlterTable
+ALTER TABLE "Skill" ADD COLUMN     "costToActive" INTEGER NOT NULL DEFAULT 1;
+
+-- AlterTable
+ALTER TABLE "SkillTree" ADD COLUMN     "lineQty" TEXT NOT NULL DEFAULT '12',
+ADD COLUMN     "maxWidth" TEXT NOT NULL DEFAULT '2200',
+ADD COLUMN     "minWidth" TEXT NOT NULL DEFAULT '1500',
+ADD COLUMN     "positionsQty" TEXT NOT NULL DEFAULT '20';

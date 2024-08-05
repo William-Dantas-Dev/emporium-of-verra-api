@@ -1,0 +1,148 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id         Int         @id @default(autoincrement())
+  name       String
+  characters Character[]
+  email      String      @unique
+  password   String
+  type       String      @default("user")
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+}
+
+model Character {
+  id        Int      @id @default(autoincrement())
+  nick      String
+  server    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  User      User?    @relation(fields: [userId], references: [id])
+  userId    Int?
+}
+
+model SkillConnection {
+  id            Int        @id @default(autoincrement())
+  startPosition String
+  midPosition   String?
+  endPosition   String
+  startAnchor   String
+  endAnchor     String
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+  SkillTree     SkillTree? @relation(fields: [skillTreeId], references: [id])
+  skillTreeId   Int?
+}
+
+model SkillTree {
+  id              Int               @id @default(autoincrement())
+  name            String            @unique
+  description     String
+  type            String
+  backgroundImage String
+  lineQty         String            @default("12")
+  positionsQty    String            @default("20")
+  minWidth        String            @default("1500")
+  maxWidth        String            @default("2200")
+  skills          Skill[]
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+  SkillConnection SkillConnection[]
+}
+
+model Skill {
+  id               Int                @id @default(autoincrement())
+  image            String
+  name             String
+  description      String
+  isActiveSkill    Boolean            @default(false)
+  isStartSkill     Boolean            @default(false)
+  tooltipDirection String             @default("bottom")
+  costToActive     Int                @default(1)
+  nivel            Int?
+  cooldown         Float?
+  manaCost         Int?
+  range            Int?
+  cost             Int                @default(1)
+  castTime         Float?
+  line             Int
+  position         Int
+  skillPreview     String?
+  isDefaultActive  Boolean            @default(false)
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime           @updatedAt
+  SkillTree        SkillTree          @relation(fields: [skillTreeId], references: [id])
+  skillTreeId      Int
+  chooseableSkills ChooseableSkills[]
+  EffectSkills     EffectSkills[]
+}
+
+model EffectSkills {
+  id          Int      @id @default(autoincrement())
+  image       String
+  name        String
+  description String
+  type        String
+  Skill       Skill    @relation(fields: [skillId], references: [id], onDelete: Cascade)
+  skillId     Int
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model ChooseableSkills {
+  id            Int      @id @default(autoincrement())
+  image         String
+  name          String
+  description   String
+  isActiveSkill Boolean  @default(false)
+  isStartSkill  Boolean  @default(false)
+  nivel         Int?
+  cooldown      Float?
+  manaCost      Int?
+  range         Int?
+  cost          Int      @default(1)
+  castTime      Float?
+  skillPreview  String?
+  Skill         Skill    @relation(fields: [skillId], references: [id], onDelete: Cascade)
+  skillId       Int
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model Maps {
+  id             Int       @id @default(autoincrement())
+  name           String    @unique
+  normalizedName String    @unique
+  image          String
+  mapMark        MapMark[]
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+}
+
+model MapMark {
+  id          Int      @id @default(autoincrement())
+  name        String
+  image       String
+  type        String
+  description String
+  isFixed     Boolean
+  lat         Float
+  lng         Float
+  Maps        Maps     @relation(fields: [mapsId], references: [id])
+  mapsId      Int
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}

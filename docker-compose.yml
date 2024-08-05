@@ -1,0 +1,15 @@
+services:
+  db-postgres-emporium:
+    image: postgres:alpine
+    ports:
+      - "5432:5432"
+    container_name: "db-postgres-emporium"
+    restart: always
+    volumes:
+      - ./database-emporium:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: pgshiroe
+      POSTGRES_PASSWORD: pgshiroe
+
+volumes:
+  database-emporium:
